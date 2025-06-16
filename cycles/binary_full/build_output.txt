@@ -1,0 +1,10 @@
+✖ [2/4] Running Main
+error: no such file or directory (error code: 2)
+  file: /home/agheieff/Arcadia/Collatz/cycles/binary_full/Main.lean
+✖ [4/4] Running «collatz-cycles»
+error: no such file or directory (error code: 2)
+  file: /home/agheieff/Arcadia/Collatz/cycles/binary_full/Main.lean
+Some required builds logged failures:
+- Main
+- «collatz-cycles»
+error: build failed
