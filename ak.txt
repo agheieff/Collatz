@@ -1,0 +1,201 @@
+=== Finding Critical K Values for Denominator Crisis ===
+
+=== Critical k values where {αk} < 0.100000 ===
+k	{αk}		n1=⌊αk⌋	δ		Comment
+--------------------------------------------------------
+5	0.07520388	2		0.07520388	* Moderate crisis *
+17	0.05569320	7		0.05569320	* Moderate crisis *
+29	0.03618252	12		0.03618252	** Strong crisis **
+41	0.01667183	17		0.01667183	** Strong crisis **
+46	0.09187571	19		0.09187571	* Moderate crisis *
+58	0.07236503	24		0.07236503	* Moderate crisis *
+70	0.05285435	29		0.05285435	* Moderate crisis *
+82	0.03334366	34		0.03334366	** Strong crisis **
+94	0.01383298	39		0.01383298	** Strong crisis **
+99	0.08903686	41		0.08903686	* Moderate crisis *
+111	0.06952618	46		0.06952618	* Moderate crisis *
+123	0.05001550	51		0.05001550	* Moderate crisis *
+135	0.03050481	56		0.03050481	** Strong crisis **
+147	0.01099413	61		0.01099413	** Strong crisis **
+152	0.08619801	63		0.08619801	* Moderate crisis *
+164	0.06668733	68		0.06668733	* Moderate crisis *
+176	0.04717665	73		0.04717665	** Strong crisis **
+188	0.02766596	78		0.02766596	** Strong crisis **
+200	0.00815528	83		0.00815528	*** EXTREME CRISIS ***
+
+=== Critical k values where {αk} > 0.900000 ===
+k	{αk}		n1=⌊αk⌋	δ		Comment
+--------------------------------------------------------
+7	0.90528543	2		0.90528543	* Moderate crisis *
+12	0.98048932	4		0.98048932	** Strong crisis **
+24	0.96097863	9		0.96097863	** Strong crisis **
+36	0.94146795	14		0.94146795	* Moderate crisis *
+48	0.92195727	19		0.92195727	* Moderate crisis *
+53	0.99716115	21		0.99716115	*** EXTREME CRISIS ***
+60	0.90244658	24		0.90244658	* Moderate crisis *
+65	0.97765047	26		0.97765047	** Strong crisis **
+77	0.95813978	31		0.95813978	** Strong crisis **
+89	0.93862910	36		0.93862910	* Moderate crisis *
+101	0.91911842	41		0.91911842	* Moderate crisis *
+106	0.99432230	43		0.99432230	*** EXTREME CRISIS ***
+118	0.97481162	48		0.97481162	** Strong crisis **
+130	0.95530093	53		0.95530093	** Strong crisis **
+142	0.93579025	58		0.93579025	* Moderate crisis *
+154	0.91627957	63		0.91627957	* Moderate crisis *
+159	0.99148345	65		0.99148345	*** EXTREME CRISIS ***
+171	0.97197276	70		0.97197276	** Strong crisis **
+183	0.95246208	75		0.95246208	** Strong crisis **
+195	0.93295140	80		0.93295140	* Moderate crisis *
+
+
+=== DETAILED ANALYSIS OF EXTREME CASES ===
+
+=== Detailed analysis for k = 17 ===
+αk = 7.0556931988, n1_critical = 7, δ = 0.0556931988
+C = 1.489171e+10
+C/4^k = 0.8668116665
+(C-3^k)/4^k = 0.8592947196
+d = 5.082748e+06
+d/3^k = 0.0393583834
+n_min = C/d = 2.929854e+03
+n_min/(4/3)^k = 22.023559
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 2.566107e+00
+If n_min = 2.93e+03, then n_max could be up to 7.52e+03
+
+=== Detailed analysis for k = 41 ===
+αk = 17.0166718324, n1_critical = 17, δ = 0.0166718324
+C = 4.799354e+24
+C/4^k = 0.9924831401
+(C-3^k)/4^k = 0.9924755977
+d = 4.239279e+17
+d/3^k = 0.0116230626
+n_min = C/d = 1.132116e+07
+n_min/(4/3)^k = 85.389125
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 9.706764e+00
+If n_min = 1.13e+07, then n_max could be up to 1.10e+08
+
+=== Detailed analysis for k = 58 ===
+αk = 24.0723650312, n1_critical = 24, δ = 0.0723650312
+C = 8.299339e+34
+C/4^k = 0.9989966116
+(C-3^k)/4^k = 0.9989965549
+d = 2.422839e+26
+d/3^k = 0.0514389109
+n_min = C/d = 3.425461e+08
+n_min/(4/3)^k = 19.421030
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 2.490860e+01
+If n_min = 3.43e+08, then n_max could be up to 8.53e+09
+
+=== Detailed analysis for k = 70 ===
+αk = 29.0528543481, n1_critical = 29, δ = 0.0528543481
+C = 1.393465e+42
+C/4^k = 0.9997618906
+(C-3^k)/4^k = 0.9997618888
+d = 9.340576e+31
+d/3^k = 0.0373152058
+n_min = C/d = 1.491840e+10
+n_min/(4/3)^k = 26.792346
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 4.844502e+01
+If n_min = 1.49e+10, then n_max could be up to 7.23e+11
+
+=== Detailed analysis for k = 91 ===
+αk = 37.7687106525, n1_critical = 38, δ = 0.7687106525
+C = 6.129873e+54
+C/4^k = 0.9999821216
+(C-3^k)/4^k = 0.9999821216
+d = 1.842682e+43
+d/3^k = 0.7037464518
+n_min = C/d = 3.326604e+11
+n_min/(4/3)^k = 1.420941
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 1.551757e+02
+If n_min = 3.33e+11, then n_max could be up to 5.16e+13
+
+=== Detailed analysis for k = 99 ===
+αk = 41.0890368637, n1_critical = 41, δ = 0.0890368637
+C = 4.017315e+59
+C/4^k = 0.9999924576
+(C-3^k)/4^k = 0.9999924576
+d = 1.093629e+46
+d/3^k = 0.0636598511
+n_min = C/d = 3.673381e+13
+n_min/(4/3)^k = 15.708369
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 2.417819e+02
+If n_min = 3.67e+13, then n_max could be up to 8.88e+15
+
+=== Detailed analysis for k = 116 ===
+αk = 48.1447300625, n1_critical = 48, δ = 0.1447300625
+C = 6.901739e+69
+C/4^k = 0.9999989932
+(C-3^k)/4^k = 0.9999989932
+d = 2.341078e+54
+d/3^k = 0.1055237834
+n_min = C/d = 2.948103e+15
+n_min/(4/3)^k = 9.476527
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 6.204382e+02
+If n_min = 2.95e+15, then n_max could be up to 1.83e+18
+
+=== Detailed analysis for k = 133 ===
+αk = 55.2004232613, n1_critical = 55, δ = 0.2004232613
+C = 1.185711e+80
+C/4^k = 0.9999998656
+(C-3^k)/4^k = 0.9999998656
+d = 4.269887e+62
+d/3^k = 0.1490354123
+n_min = C/d = 2.776914e+17
+n_min/(4/3)^k = 6.709814
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 1.592111e+03
+If n_min = 2.78e+17, then n_max could be up to 4.42e+20
+
+=== Detailed analysis for k = 150 ===
+αk = 62.2561164601, n1_critical = 62, δ = 0.2561164601
+C = 2.037036e+90
+C/4^k = 0.9999999821
+(C-3^k)/4^k = 0.9999999821
+d = 7.187381e+70
+d/3^k = 0.1942595886
+n_min = C/d = 2.834184e+19
+n_min/(4/3)^k = 5.147751
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 4.085527e+03
+If n_min = 2.83e+19, then n_max could be up to 1.16e+23
+
+=== Detailed analysis for k = 174 ===
+αk = 72.2170950937, n1_critical = 72, δ = 0.2170950937
+C = 5.733747e+104
+C/4^k = 0.9999999990
+(C-3^k)/4^k = 0.9999999990
+d = 1.696913e+82
+d/3^k = 0.1623907228
+n_min = C/d = 3.378928e+22
+n_min/(4/3)^k = 6.157987
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 1.545424e+04
+If n_min = 3.38e+22, then n_max could be up to 5.22e+26
+
+=== Detailed analysis for k = 191 ===
+αk = 79.2727882926, n1_critical = 79, δ = 0.2727882926
+C = 9.850502e+114
+C/4^k = 0.9999999999
+(C-3^k)/4^k = 0.9999999999
+d = 2.808771e+90
+d/3^k = 0.2081405425
+n_min = C/d = 3.507050e+24
+n_min/(4/3)^k = 4.804446
+*** n_min > k: This creates immediate problems! ***
+Maximum growth factor (1.057^k) = 3.965725e+04
+If n_min = 3.51e+24, then n_max could be up to 1.39e+29
+
+
+=== SUMMARY ===
+1. The denominator crisis occurs infinitely often due to Weyl equidistribution
+2. When δ < 0.01, we get n_min > 50(4/3)^k, growing exponentially
+3. Combined with growth bounds, this creates arithmetic impossibility
+4. The empirical bound C ≥ 0.686×4^k makes the crisis severe
