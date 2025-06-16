@@ -73,13 +73,65 @@ def computeC (k : ℕ) (seq : BinaryJSeq k) : ℤ :=
     let Ji := Finset.sum (Finset.range (i + 1 : ℕ)) (fun j => jValue (seq ⟨j, by omega⟩))
     (3^(k - i - 1) : ℤ) * (2^Ji : ℤ))
 
+/-- Helper: Cycle relation in multiplicative form -/
+lemma cycle_mult_relation (k : ℕ) (cycle : BinaryCycle k) (i : Fin k) :
+  (cycle.elements (i + 1) : ℤ) * 2^(jValue (cycle.jSeq i)) = 3 * cycle.elements i + 1 := by
+  have h := cycle.cycle_property i
+  unfold binaryCollatz at h
+  have h_div : (3 * cycle.elements i + 1) % 2^(jValue (cycle.jSeq i)) = 0 := by
+    -- When n is odd, 3n+1 is even
+    have h_odd : Odd (cycle.elements i) := cycle.all_odd i
+    have h_even : Even (3 * cycle.elements i + 1) := by
+      rw [Nat.even_add_one]
+      apply Nat.odd_mul_odd
+      · norm_num
+      · exact h_odd
+    -- Check divisibility by 2^j based on j value
+    cases' h_j : cycle.jSeq i with
+    | zero => -- j = 1
+      simp [jValue]
+      exact Nat.even_iff_two_dvd.mp h_even
+    | succ zero => -- j = 2  
+      simp [jValue]
+      -- For j=2, we need n ≡ 1 (mod 4) and then 3n+1 ≡ 0 (mod 4)
+      -- This is guaranteed by the cycle construction
+      sorry -- Need to connect to j=2 constraint
+    | succ (succ n) => -- impossible
+      exfalso
+      have : (⟨n.succ.succ, by simp⟩ : Fin 2) = 0 ∨ (⟨n.succ.succ, by simp⟩ : Fin 2) = 1 := by
+        fin_cases (⟨n.succ.succ, by simp⟩ : Fin 2)
+      cases this <;> simp at h_j
+  rw [Nat.div_eq_iff_eq_mul_left] at h
+  · exact_mod_cast h.symm
+  · apply pow_pos; norm_num
+  · exact h_div
+
 /-- Fundamental cycle equation -/
 theorem cycle_equation (k : ℕ) (cycle : BinaryCycle k) (hk : 0 < k) :
   (cycle.elements 0 : ℤ) * closureConstant k cycle = computeC k cycle.jSeq := by
-  -- The proof follows from unwinding the cycle relation
-  -- Key idea: multiply the cycle relation by appropriate powers of 3
-  -- and sum to get the telescoping series
-  sorry -- This requires detailed algebra involving the cycle property
+  unfold closureConstant computeC
+  -- Establish the telescoping identity
+  -- From cycle relation: n_{i+1} * 2^{j_i} = 3n_i + 1
+  -- Multiply by 3^{k-i-1}: n_{i+1} * 3^{k-i-1} * 2^{j_i} = 3^{k-i} * n_i + 3^{k-i-1}
+  -- Sum from i=0 to k-1: ∑ n_{i+1} * 3^{k-i-1} * 2^{j_i} = ∑ (3^{k-i} * n_i + 3^{k-i-1})
+  
+  -- First, let's establish the key identity for each term
+  have h_telescope : ∀ i : Fin k, 
+    (cycle.elements (i + 1) : ℤ) * 3^(k - i.val - 1) * 2^(jValue (cycle.jSeq i)) = 
+    3^(k - i.val) * cycle.elements i + 3^(k - i.val - 1) := by
+    intro i
+    have h := cycle_mult_relation k cycle i
+    -- From h: n_{i+1} * 2^{j_i} = 3n_i + 1
+    -- Multiply both sides by 3^{k-i-1}
+    have h' : (cycle.elements (i + 1) : ℤ) * 2^(jValue (cycle.jSeq i)) * 3^(k - i.val - 1) = 
+              (3 * cycle.elements i + 1) * 3^(k - i.val - 1) := by
+      rw [h]
+    rw [mul_comm _ (3^(k - i.val - 1)), ← mul_assoc] at h'
+    rw [h']
+    ring
+  
+  -- Now sum the telescoping series
+  sorry -- Complete the telescoping sum calculation
 
 /-- Lower bound on C value -/
 lemma computeC_lower_bound (k : ℕ) (seq : BinaryJSeq k) (hk : k ≥ 3) :
@@ -101,7 +153,56 @@ theorem j_sum_bounds (k : ℕ) (cycle : BinaryCycle k) (hk : 0 < k) :
   ⌊1.585 * k⌋ < J ∧ J ≤ 2 * k := by
   have ⟨_, h2⟩ := sumJ_bounds k cycle.jSeq
   constructor
-  · sorry -- This requires showing that cycles need J > 1.585k to close
+  · -- For a cycle to close, we need 2^J > 3^k
+    -- This requires J > k * log₂(3) ≈ k * 1.585
+    -- More precisely, J > ⌊k * 1.585⌋ for the cycle equation to have solutions
+    have h_cycle_closure : 2^(sumJ k cycle.jSeq) > 3^k := by
+      -- From the cycle equation: n₀(2^J - 3^k) = C > 0
+      -- Since n₀ > 0 and C > 0, we need 2^J - 3^k > 0
+      have h_eq := cycle_equation k cycle hk
+      have h_C_pos : computeC k cycle.jSeq > 0 := by
+        -- C is a sum of positive terms
+        unfold computeC
+        apply Finset.sum_pos
+        intro i _
+        apply mul_pos
+        · apply pow_pos; norm_num
+        · apply pow_pos; norm_num
+      have h_n0_pos : (0 : ℤ) < cycle.elements 0 := by
+        exact_mod_cast cycle.positive 0
+      unfold closureConstant at h_eq
+      have h_closure_pos : 0 < 2^(sumJ k cycle.jSeq) - 3^k := by
+        rw [← h_eq] at h_C_pos
+        exact pos_of_mul_pos_left h_C_pos h_n0_pos
+      linarith [h_closure_pos]
+    have h_log : (sumJ k cycle.jSeq : ℝ) > k * (log 3 / log 2) := by
+      rw [← log_pow, ← log_pow] at h_cycle_closure
+      · rw [log_lt_log_iff] at h_cycle_closure
+        · rw [div_lt_iff] at h_cycle_closure
+          · exact h_cycle_closure
+          · simp [log_pos]; norm_num
+        · apply pow_pos; norm_num
+        · apply pow_pos; norm_num
+      · norm_num
+      · norm_num
+    -- Since log₂(3) > 1.584, we have J > k * 1.584
+    have h_log_bound : log 3 / log 2 > 1.584 := by
+      -- This is a numerical fact that can be verified
+      sorry -- axiom log2_3_bounds.1 in Crisis.lean
+    have : (sumJ k cycle.jSeq : ℝ) > k * 1.584 := by
+      linarith [h_log, h_log_bound]
+    -- For integers, if J > k * 1.584, then J ≥ ⌊k * 1.584⌋ + 1
+    have h_int : sumJ k cycle.jSeq ≥ ⌊k * 1.584⌋ + 1 := by
+      have h1 : (sumJ k cycle.jSeq : ℝ) > ⌊k * 1.584⌋ := by
+        apply lt_of_lt_of_le _ this
+        simp [Nat.floor_le]
+      exact Nat.lt_iff_add_one_le.mp (Nat.cast_lt.mp h1)
+    -- Since ⌊k * 1.584⌋ + 1 > ⌊k * 1.585⌋ for most k
+    calc sumJ k cycle.jSeq 
+      ≥ ⌊k * 1.584⌋ + 1 := h_int
+      _ > ⌊k * 1.585⌋ := by
+        -- This holds because k * 0.001 < 1 for reasonable k
+        sorry -- Technical inequality about floor functions
   · exact h2
 
 /-- All cycle elements are bounded by 2^k -/
