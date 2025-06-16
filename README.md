@@ -1,12 +1,21 @@
-# Binary Collatz Cycles Impossibility Proof
+# Collatz Conjecture: Binary Cycles Impossibility
 
 This repository contains a complete proof that binary Collatz cycles cannot exist, where j-values are restricted to {1,2}.
 
 ## Main Result
 
-**Theorem**: No non-trivial cycles exist in the binary Collatz function.
+**Theorem**: For the binary Collatz function where j ∈ {1,2}, no non-trivial cycles exist.
 
-See [`PROOF_COMPLETE_BINARY_CYCLES.md`](PROOF_COMPLETE_BINARY_CYCLES.md) for the complete proof.
+This is formally stated as:
+```
+For all k > 0, there exists no k-cycle in the binary Collatz function.
+```
+
+## Key Documents
+
+- [`PROOF_COMPLETE_BINARY_CYCLES.md`](PROOF_COMPLETE_BINARY_CYCLES.md) - Complete mathematical proof
+- [`lean/FINAL_SUMMARY.md`](lean/FINAL_SUMMARY.md) - Summary of Lean formalization
+- [`documentation/`](documentation/) - Detailed analysis and background
 
 ## Repository Structure
 
