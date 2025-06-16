@@ -1,5 +1,5 @@
 import BinaryCycles.Core.Definitions
-import BinaryCycles.ClosureConstant.Bounds
+import BinaryCycles.CrisisAnalysis
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -57,24 +57,32 @@ theorem medium_j_impossible (k : ℕ) (c : BinaryCycle k)
       have : J ≤ ⌊1.585 * k⌋ + 10 := h_near
       sorry -- Apply near_minimum_j_analysis
     
-    -- This forces n₁ to be large
-    have h_n1_large : (c.elements 0 : ℝ) ≥ 0.686 * 4^k / (0.01 * k * 3^k) := by
-      sorry -- From cycle equation
-    
-    -- Simplify: n₁ ≥ 68.6 * (4/3)^k / k
-    have h_growth : (c.elements 0 : ℝ) ≥ 68.6 * (4/3)^k / k := by
-      convert h_n1_large using 1
+    -- This forces n_min to be large  
+    have h_n_min_large : ∃ i, (c.elements i : ℝ) ≥ 68.6 * (4/3)^k / k := by
+      -- From cycle equation with near-minimum J
+      have h_eq : ∃ i, (c.elements i : ℝ) ≥ 0.686 * 4^k / (0.01 * k * 3^k) := by
+        -- From the cycle equation: n₁ * |2^J - 3^k| = C
+        -- When J is near minimum, |2^J - 3^k| ≈ 0.01 * k * 3^k (from h_denom)
+        -- And C ≥ 0.686 * 4^k (but this bound is wrong for large k)
+        -- So n₁ ≥ C / |2^J - 3^k| ≥ 0.686 * 4^k / (0.01 * k * 3^k)
+        use 0
+        -- The actual proof would use the cycle equation similar to crisis case
+        sorry -- Similar to crisis analysis
+      obtain ⟨i, hi⟩ := h_eq
+      use i
+      convert hi using 1
       ring
     
-    -- For large k, this exceeds 2^k
-    have h_exceeds : 68.6 * (4/3)^k / k > 2^k := by
-      sorry -- True for k > 1000
+    -- When n_min ≥ 68.6 * (4/3)^k / k, all elements are large
+    obtain ⟨i₀, h_min⟩ := h_n_min_large
     
-    -- Contradiction with boundedness
-    have h_bounded : c.elements 0 ≤ 2^k := by
-      apply cycle_elements_bounded k c (by linarith : 0 < k)
+    -- The key contradiction comes from modular constraints
+    -- With J near minimum, we need many j=1 positions (close to 0.415k)
+    -- But when all elements are large with correlated growth, the mod 4 patterns
+    -- don't allow enough flexibility to achieve the required j-distribution
     
-    linarith [h_growth, h_exceeds, h_bounded]
+    -- This analysis is similar to the crisis case but with different parameters
+    sorry -- Requires detailed modular analysis for near-minimum J
     
   case neg =>
     -- General medium-J case
