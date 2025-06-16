@@ -7,6 +7,12 @@ package «collatz-cycles» where
 lean_lib «CollatzCycles» where
   -- add library configuration options here
 
+lean_lib «BinaryCycles» where
+  -- Binary Collatz cycles impossibility proof
+
+lean_lib «BinaryCollatz» where
+  -- Main module for binary Collatz results
+
 @[default_target]
 lean_exe «collatz-cycles» where
   root := `Main

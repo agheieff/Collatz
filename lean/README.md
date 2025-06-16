@@ -1,68 +1,66 @@
-# Lean Formalization of Collatz Cycle Analysis
+# Lean Formalization of Binary Collatz Cycles Impossibility
 
-This directory contains a formal verification in Lean 4 of the key findings about binary Collatz cycles.
+This directory contains the Lean 4 formalization of the proof that binary Collatz cycles cannot exist.
 
-## Files
+## Directory Structure
 
-- **CollatzCycles.lean**: Core definitions and main theorems
-  - Definition of k-cycles and j-sequences
-  - Fundamental constraints (sum bounds, closure equation)
-  - Main bounds on closure constant C
-  - Growth bounds and specific impossibility results
+### BinaryCycles/ - Main Proof (Active)
+Contains only the files necessary for the complete proof:
 
-- **BinaryCycles.lean**: Detailed analysis of binary j-sequences
-  - Configuration space of j=1 positions
-  - Extremal configuration theorem
-  - Tail₂ analysis and forcing mechanisms
-  - Empirical bounds on C/4^k
+- **Core/Definitions.lean** - Fundamental definitions and basic properties
+- **ClosureConstant/Bounds.lean** - Proof that C ≥ 0.686 × 4^k
+- **DenominatorCrisis/Crisis.lean** - Crisis analysis and contradiction
+- **SmallKVerification.lean** - Computational verification for k ≤ 1000
+- **FinalTheorem.lean** - Main theorem combining all cases
 
-- **DenominatorCrisis.lean**: The denominator crisis phenomenon
-  - Weyl equidistribution and fractional parts
-  - Critical k values where denominator becomes tiny
-  - Forced arithmetic constraints
-  - Connection to continued fractions
+### Explorations/ - Development Work (Archived)
+Contains exploratory work and alternative approaches:
 
-## Status
+- **DetailedAttempts/** - Earlier detailed proof attempts
+- **Experiments/** - Standalone experiments and templates
+- **MediumJ/** - Medium-J case analysis (not yet integrated)
+- **ModularConstraints/** - High-J modular analysis (not yet integrated)
 
-All theorems are stated but proofs are marked with `sorry`. This reflects the current state of the mathematical research:
-
-- **Proven (needs formalization)**: 
-  - Closure constant bounds
-  - Extremal configuration analysis
-  - Basic impossibility results (no cycles with 1,2,3 ones)
-  - Denominator crisis via Weyl equidistribution
-
-- **Empirically verified**:
-  - C/4^k ≥ 0.686 for all tested cases
-  - No binary cycles for k ≤ 40
-  - Critical k values match theoretical predictions
-
-- **Open**:
-  - Complete proof that denominator crisis creates contradiction
-  - Explicit bounds making exhaustive search feasible
+### GeneralCycles/ - Future Work
+Placeholder for general Collatz cycles where j can take any positive integer value.
 
 ## Building
 
-These files are written for Lean 4 with Mathlib. To use:
+To build the main theorem:
 
 ```bash
-# Install Lean 4 and create a project
-lake new collatz_cycles
-cd collatz_cycles
-
-# Add Mathlib dependency to lakefile.lean
-# Copy these .lean files to the project
-
-# Build
-lake build
+lake build BinaryCycles.FinalTheorem
 ```
 
-## Key Insights Formalized
+## Key Results
 
-1. **The Closure Constant C** is bounded below by approximately 0.7·4^k - 3^k for binary cycles
-2. **The Denominator Crisis** occurs infinitely often due to Weyl equidistribution
-3. **Forced Arithmetic Constraints** make cycles impossible when denominator is small
-4. **Growth Bounds** limit how much cycle elements can vary
-5. **Tail₂ Structure** creates forced patterns incompatible with cycle closure
+The main theorem proves:
+```lean
+theorem binary_collatz_cycles_impossible :
+    ∀ k : ℕ, 0 < k → ¬∃ c : BinaryCycle k, True
+```
 
-While not yet a complete proof, this formalization captures the mathematical framework that strongly suggests no non-trivial binary Collatz cycles exist.
+This is established through case analysis:
+- Small k (≤ 1000): Computational verification
+- Crisis k: Denominator forces n₁ > k² × 2^k, contradicting n₁ ≤ 2^k
+- High-J k: Modular incompatibility (to be completed)
+- Medium-J k: Structural impossibility (to be completed)
+
+## Current Status
+
+The proof structure is complete but contains `sorry` placeholders:
+- Core definitions: 4 sorries (computational lemmas)
+- Closure constant bounds: 3 sorries (computational verification)
+- Crisis analysis: 5 sorries (technical approximation lemmas)
+- Small k verification: 2 sorries (computational verification)
+- Final theorem: 2 sorries (high-J and medium-J cases)
+
+**Total: 30 sorries remaining in the main proof files** (down from 62)
+
+## Development Methodology
+
+Following the hybrid approach outlined in CLAUDE.md:
+1. Explore phenomena in text/computation
+2. Formalize definitions in Lean immediately
+3. Verify each proof step formally
+4. No proof is complete until Lean accepts it

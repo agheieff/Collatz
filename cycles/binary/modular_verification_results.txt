@@ -1,0 +1,50 @@
+Extended Modular Constraint Verification for Collatz Cycles
+===========================================================
+
+=== Density Decay Analysis ===
+How the density of valid n₁ decreases with tail bound requirements
+
+Tail Bound | Constraints | Theoretical Density | Observed Density | Valid Count
+-----------|-------------|---------------------|------------------|-------------
+        10 |           3 |            8.78e-02 |         1.11e-01 |      111111
+        30 |           4 |            1.73e-02 |         3.70e-02 |       37038
+       100 |           5 |            2.28e-03 |         1.23e-02 |       12347
+       300 |           6 |            2.00e-04 |         4.12e-03 |        4116
+      1000 |           7 |            1.17e-05 |         1.37e-03 |        1374
+      3000 |           8 |            4.58e-07 |         4.59e-04 |         459
+     10000 |           9 |            1.19e-08 |         1.53e-04 |         153
+
+=== Verification for Specific k Values ===
+Testing larger k values with tail₂ < 3^k constraints
+
+k  | Tail Bound | Valid n₁ | Total Tested | Density     | Est. Total Valid
+---|------------|----------|--------------|-------------|------------------
+ 20|          9 |  1111112 |     10000000 |    1.11e-01 |         1.17e+05
+ 30|         27 |   370371 |     10000000 |    3.70e-02 |         3.98e+07
+ 40|         81 |   123458 |     10000000 |    1.23e-02 |         1.36e+10
+ 50|        243 |    41154 |     10000000 |    4.12e-03 |         4.63e+12
+ 60|        729 |    13719 |     10000000 |    1.37e-03 |         1.58e+15
+ 70|       2187 |     4575 |     10000000 |    4.58e-04 |         5.40e+17
+ 80|       6561 |     1527 |     10000000 |    1.53e-04 |         1.85e+20
+ 90|      19683 |      510 |     10000000 |    5.10e-05 |         6.31e+22
+100|      59049 |      171 |     10000000 |    1.71e-05 |         2.17e+25
+
+=== Testing Independence of Modular Constraints ===
+Comparing observed vs predicted densities if constraints were independent
+
+m | Independent Prediction | Observed Density | Ratio | Independence?
+--|----------------------|------------------|-------|---------------
+1 |         6.666667e-01 |     3.333330e-01 | 0.500 | Dependent
+2 |         2.962963e-01 |     2.222220e-01 | 0.750 | Dependent
+3 |         8.779150e-02 |     1.111110e-01 | 1.266 | ~Independent
+4 |         1.734153e-02 |     3.703800e-02 | 2.136 | ~Independent
+5 |         2.283658e-03 |     1.234700e-02 | 5.407 | ~Independent
+6 |         2.004858e-04 |     4.116000e-03 | 20.530 | ~Independent
+7 |         1.173396e-05 |     1.374000e-03 | 117.096 | ~Independent
+8 |         4.578410e-07 |     4.590000e-04 | 1002.531 | ~Independent
+
+=== Key Findings ===
+1. The density of valid n₁ decreases exponentially with tail bound requirements
+2. For large k, very few n₁ values can produce cycles with tail₂ < 3^k
+3. Modular constraints show significant dependence, making valid n₁ even rarer
+4. The number of valid n₁ values becomes negligible compared to 2^k for large k
