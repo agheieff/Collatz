@@ -53,6 +53,25 @@ When developing mathematical proofs in this repository, follow this methodology:
 
 **Important**: No proof should be considered complete until it has been formalized and checked in Lean. The text/markdown files serve as motivation and explanation, while Lean files provide the rigorous verification.
 
+### Critical Reminders for Proof Development
+
+When working on mathematical proofs in this repository, please be aware of common pitfalls:
+
+1. **Avoid unjustified assumptions** - Don't assume elements are separated by specific amounts (like 2√k) without proof
+2. **Be rigorous with "sorry" statements** - Each one represents a gap that might be unfillable  
+3. **Don't claim near-completion prematurely** - The Collatz conjecture is unsolved for good reasons
+4. **Focus on what's actually proven** - Distinguish clearly between proven facts and hopeful assumptions
+5. **Watch for circular reasoning** - Especially in bounds and constraint arguments
+
+Common traps to avoid:
+- Assuming element separation without deriving it from dynamics
+- Pulling constants from thin air (e.g., "width ≤ 5000 because n₁ ~ 50")
+- Making counting arguments without proper justification
+- Claiming contradictions based on unproven bounds
+- Getting carried away with "this should work" arguments
+
+Remember: If elementary arguments could solve this, it would have been solved decades ago. Be skeptical of "simple" approaches and maintain mathematical rigor throughout.
+
 ## Architecture and Key Concepts
 
 ### Mathematical Framework

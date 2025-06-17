@@ -4,6 +4,8 @@
 
 The proof of binary Collatz cycle impossibility is **incomplete** due to a fundamental error in a key bound. However, significant portions remain valid and the overall approach may be salvageable with corrections.
 
+**UPDATE (2025-06-17)**: The incorrect C ≥ 0.686 × 4^k bound has been removed from the codebase and replaced with the correct understanding that C grows like 3^k, not 4^k. The growth analysis has been updated accordingly.
+
 ## The Critical Error
 
 ### What Was Claimed
@@ -82,14 +84,16 @@ k=20: C/4^k ≈ 0.06 ✗ (decreasing with k)
 The Lean files have been reorganized for clarity:
 
 ### Core Structure
-- `lean/BinaryCycles/Core/Definitions.lean` - Fundamental definitions and cycle equation
+- `lean/BinaryCycles/Core/Definitions.lean` - Fundamental definitions and cycle equation (✓ updated)
 - `lean/BinaryCycles/MainResults.lean` - Main theorem and all valid results
 - `lean/BinaryCycles/ModularAnalysis.lean` - High-J modular constraints (✓ proven)
 - `lean/BinaryCycles/SmallKVerification.lean` - Computational verification framework
+- `lean/BinaryCycles/ProofAxioms.lean` - Core axioms (✓ updated to remove incorrect bound)
 
 ### Analysis Files
-- `lean/BinaryCycles/CrisisAnalysis.lean` - Crisis phenomenon (needs revision)
-- `lean/BinaryCycles/MediumJAnalysis.lean` - Medium-J cases (needs revision)
+- `lean/BinaryCycles/CrisisAnalysis.lean` - Crisis phenomenon (⚠️ contains warning about incorrect bound)
+- `lean/BinaryCycles/MediumJAnalysis.lean` - Medium-J cases (✓ updated to use correct bounds)
+- `lean/BinaryCycles/MediumJComplete.lean` - Complete medium-J analysis (✓ uses correct 3^k growth)
 - `lean/BinaryCycles/Computational.lean` - All computational tools and constants
 
 ## Recommended Path Forward

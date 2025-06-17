@@ -1,93 +1,158 @@
-import BinaryCycles.Core.Definitions
-import BinaryCycles.CrisisAnalysis
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import BinaryCycles.Core
+import BinaryCycles.Axioms
+import BinaryCycles.NumericalBounds
 
 /-!
 # Medium-J Analysis for Binary Collatz Cycles
 
-This file proves that medium-J cycles (neither crisis nor high-J) cannot exist.
+This file analyzes the medium-J case where J is neither high nor in crisis.
+
+## Status: INCOMPLETE
+The original proof relied on C/4^k → 0 to show contradiction.
+With the corrected C ~ 3^k growth, this approach fails.
+A new contradiction mechanism is needed.
+
+## The Gap
+- C ~ 3^k and denominator ~ δ·3^k for non-crisis
+- This gives n₁ ~ constant (doesn't grow with k)
+- Original counting argument no longer works
 -/
 
 namespace BinaryCollatz
 
 open Real
 
-/-- In medium-J range, the denominator has moderate size -/
-lemma medium_j_denominator_bound (k : ℕ) (J : ℕ) 
-    (hk : k > 1000) (h_not_crisis : ¬isCrisis k)
-    (hJ_lower : ⌊1.585 * k⌋ < J) (hJ_upper : J < 2 * k - k / 10) :
-    ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ c₁ < c₂ ∧ c₂ < 1 ∧
-    c₁ * 3^k < (|2^J - 3^k| : ℝ) ∧ (|2^J - 3^k| : ℝ) < c₂ * 3^k := by
-  -- In medium-J range, denominator is between polynomial and exponential in k
+/-! ## Medium-J Definition and Properties -/
+
+/-- Medium-J: not high-J and not crisis -/
+def isMediumJ (k : ℕ) (J : ℕ) : Prop :=
+  ⌊1.585 * k⌋ < J ∧ J < 2 * k - k / 10 ∧ ¬isCrisis k
+
+/-- In medium-J, we have moderate number of j=2 positions -/
+theorem medium_j_structure (k : ℕ) (J : ℕ) (h_med : isMediumJ k J) :
+    let num_j2 := J - k
+    k / 10 < num_j2 ∧ num_j2 < 9 * k / 10 := by
   sorry
 
-/-- Near-minimum J analysis -/
-lemma near_minimum_j_analysis (k : ℕ) (J : ℕ)
-    (hk : k > 1000) (hJ : J = ⌊1.585 * k⌋ + 1) :
-    (|2^J - 3^k| : ℝ) ≥ 0.01 * k * 3^k := by
-  -- When J is just above minimum, denominator ≈ k * 3^k
-  -- Key: J ≈ k * log₂(3) + 1, so 2^J ≈ 2 * 3^k
-  -- The error is proportional to k * 3^k
-  have h_approx : 1.584 < log 3 / log 2 ∧ log 3 / log 2 < 1.585 := by
-    sorry -- Numerical bounds
-  -- Since J = ⌊1.585k⌋ + 1 and log₂(3) ≈ 1.585
-  -- We have |J - k*log₂(3)| ≤ 1
-  -- This gives |2^J - 3^k| ≈ |2^(k*log₂(3)+ε) - 3^k| = 3^k|2^ε - 1|
-  -- For small ε, |2^ε - 1| ≈ ε * ln(2) ≈ 0.693ε
-  -- Since |ε| ≤ 1/k, we get |2^J - 3^k| ≥ 0.01 * k * 3^k
-  sorry -- Technical calculation using Taylor expansion
+/-! ## Element Bounds (The Problem Area) -/
 
-/-- Medium-J structural impossibility -/
-theorem medium_j_impossible (k : ℕ) (c : BinaryCycle k)
-    (hk : k > 1000) (h_not_crisis : ¬isCrisis k)
-    (hJ : sumJ k c.jSeq < 2 * k - k / 10) : False := by
-  let J := sumJ k c.jSeq
+/-- For medium-J non-crisis, n₁ is bounded by a constant -/
+theorem n1_bounded_constant (k : ℕ) (cycle : BinaryCycle k)
+    (hk : k > 100) (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    ∃ M : ℝ, M > 0 ∧ (cycle.elements 0 : ℝ) ≤ M := by
+  -- This is the KEY ISSUE with the original proof
+  -- With C ~ c₁·3^k and denominator ~ δ·3^k
+  -- We get n₁ = C/denominator ~ c₁/δ = constant
   
-  -- J must be above minimum for cycles
-  have hJ_min : ⌊1.585 * k⌋ < J := by
-    apply j_sum_bounds k c (by linarith : 0 < k) |>.1
+  let J := sumJ k cycle.jSeq
   
-  -- Get denominator bounds
-  by_cases h_near : J ≤ ⌊1.585 * k⌋ + 10
+  -- Get C bounds
+  have ⟨c₁, c₂, _, _, _, _, hC_upper⟩ := 
+    C_growth_cycle_compatible k cycle.jSeq 
+      ⟨h_med.1, by linarith : J < 2 * k⟩
   
-  case pos =>
-    -- Near-minimum J case
-    have h_denom : (|closureConstant k c| : ℝ) ≥ 0.01 * k * 3^k := by
-      unfold closureConstant
-      have : J ≤ ⌊1.585 * k⌋ + 10 := h_near
-      sorry -- Apply near_minimum_j_analysis
-    
-    -- This forces n_min to be large  
-    have h_n_min_large : ∃ i, (c.elements i : ℝ) ≥ 68.6 * (4/3)^k / k := by
-      -- From cycle equation with near-minimum J
-      have h_eq : ∃ i, (c.elements i : ℝ) ≥ 0.686 * 4^k / (0.01 * k * 3^k) := by
-        -- From the cycle equation: n₁ * |2^J - 3^k| = C
-        -- When J is near minimum, |2^J - 3^k| ≈ 0.01 * k * 3^k (from h_denom)
-        -- And C ≥ 0.686 * 4^k (but this bound is wrong for large k)
-        -- So n₁ ≥ C / |2^J - 3^k| ≥ 0.686 * 4^k / (0.01 * k * 3^k)
-        use 0
-        -- The actual proof would use the cycle equation similar to crisis case
-        sorry -- Similar to crisis analysis
-      obtain ⟨i, hi⟩ := h_eq
-      use i
-      convert hi using 1
-      ring
-    
-    -- When n_min ≥ 68.6 * (4/3)^k / k, all elements are large
-    obtain ⟨i₀, h_min⟩ := h_n_min_large
-    
-    -- The key contradiction comes from modular constraints
-    -- With J near minimum, we need many j=1 positions (close to 0.415k)
-    -- But when all elements are large with correlated growth, the mod 4 patterns
-    -- don't allow enough flexibility to achieve the required j-distribution
-    
-    -- This analysis is similar to the crisis case but with different parameters
-    sorry -- Requires detailed modular analysis for near-minimum J
-    
-  case neg =>
-    -- General medium-J case
-    push_neg at h_near
-    -- In this range, structural constraints prevent cycles
-    sorry -- This requires analyzing j-distribution patterns
+  -- Get denominator bound (non-crisis)
+  have ⟨δ, hδ_pos, h_denom⟩ := 
+    denominator_bound_non_crisis k J ⟨h_med.1, h_med.2.1⟩ h_med.2.2
+  
+  -- Apply cycle equation
+  have h_n1 := n1_from_cycle_equation k cycle (by omega : 0 < k)
+  
+  -- Calculate upper bound
+  use c₂ / δ
+  constructor
+  · apply div_pos; linarith
+  · calc (cycle.elements 0 : ℝ)
+      = (computeC k cycle.jSeq : ℝ) / |2^J - 3^k| := h_n1
+      _ ≤ c₂ * 3^k / (δ * 3^k) := by
+        apply div_le_div
+        · exact hC_upper
+        · linarith
+        · exact h_denom
+        · apply mul_pos hδ_pos; apply pow_pos; norm_num
+      _ = c₂ / δ := by field_simp
+
+/-- All cycle elements have similar bounds -/
+theorem cycle_elements_similar_bounds (k : ℕ) (cycle : BinaryCycle k)
+    (hk : k > 100) (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    ∃ M : ℝ, M > 0 ∧ ∀ i : Fin k, (cycle.elements i : ℝ) ≤ M * k := by
+  -- In medium-J, elements don't grow much through the cycle
+  -- This is because (3n+1)/2^j ≈ (3/2^j)n for large n
+  sorry
+
+/-! ## The Failed Approach -/
+
+/-- OBSOLETE: The original counting argument doesn't work -/
+theorem medium_j_old_approach_fails (k : ℕ) (cycle : BinaryCycle k)
+    (hk : k > 100) (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    -- Cannot conclude False from bounded elements alone
+    True := by
+  -- Original approach:
+  -- 1. Show all elements ≤ M for constant M
+  -- 2. But need k distinct odd integers
+  -- 3. Claim: not enough odd integers ≤ M
+  
+  -- Why this fails:
+  -- M could be large enough to contain k distinct odd integers
+  -- Without growth in M relative to k, no contradiction
+  trivial
+
+/-! ## The Width Constraint Approach -/
+
+/-- The width constraint provides the contradiction for medium-J -/
+theorem medium_j_width_contradiction (k : ℕ) (cycle : BinaryCycle k)
+    (hk : k > 10000) (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    False := by
+  -- Key insight: Elements must satisfy two incompatible constraints
+  
+  -- 1. Boundedness: All elements in range [M/C, MC] for constants M, C
+  -- This follows from n₁ ~ constant and bounded growth ratios
+  obtain ⟨M, hM_pos, h_n1⟩ := n1_bounded_constant k cycle (by omega : k > 100) h_med
+  
+  -- 2. Distinctness: Need k distinct odd integers
+  -- Minimum width for k distinct odd integers is 2(k-1)
+  
+  -- But the range [M/C, MC] contains only O(M) odd integers
+  -- For large k, we can't fit k distinct odd integers in this range
+  
+  -- The formal proof would follow WidthConstraint.lean
+  sorry -- Will be completed when width constraint is fully formalized
+
+/-- Alternative: Counting odd integers in bounded range -/
+theorem medium_j_counting_contradiction (k : ℕ) (cycle : BinaryCycle k)
+    (hk : k > 10000) (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    False := by
+  -- All cycle elements are odd integers in a bounded range
+  -- But for large k, there aren't enough odd integers in any bounded range
+  
+  -- Get bounds on all elements
+  obtain ⟨M, hM_pos, h_bounds⟩ := cycle_elements_similar_bounds k cycle (by omega : k > 100) h_med
+  
+  -- Count odd integers in range [1, M*k]
+  -- At most (M*k)/2 odd integers
+  
+  -- But we need k distinct odd integers
+  -- For large k, k > (M*k)/2 is impossible when M is constant
+  
+  sorry -- Technical counting argument
+
+/-! ## Partial Results -/
+
+/-- j-pattern constraints in medium-J -/
+theorem medium_j_pattern_constraints (k : ℕ) (seq : BinaryJSeq k)
+    (h_med : isMediumJ k (sumJ k seq)) :
+    -- Some structural constraint on j-patterns
+    -- This might be the key to a new approach
+    sorry := by
+  sorry
+
+/-- Element ratios in medium-J cycles -/
+theorem medium_j_element_ratios (k : ℕ) (cycle : BinaryCycle k)
+    (h_med : isMediumJ k (sumJ k cycle.jSeq)) :
+    ∀ i : Fin k, 
+    let ratio := (cycle.elements (i + 1) : ℝ) / cycle.elements i
+    1/2 < ratio ∧ ratio < 2 := by
+  -- Elements can't vary too much in a cycle
+  sorry
 
 end BinaryCollatz

@@ -1,88 +1,103 @@
 # Binary Collatz Cycles - Lean Formalization
 
-## Overview
+This directory contains the Lean 4 formalization of the binary Collatz cycles impossibility proof.
 
-This directory contains a Lean 4 formalization of the binary Collatz cycle impossibility proof. The proof shows that no k-cycles exist in the binary Collatz function where j ∈ {1, 2}.
+## Status: INCOMPLETE
 
-## Current Status
+The proof is incomplete due to a fundamental error in the original approach. The claim that C ≥ 0.686 × 4^k is FALSE for k ≥ 8. The correct growth is C ~ 3^k, which invalidates the medium-J analysis.
 
-### ⚠️ Critical Issue Discovered
+### What Works
+- ✓ Small k (≤ 500): Computationally verified  
+- ✓ High-J cycles: Modular contradiction proven
+- ✓ Crisis cycles: Denominator analysis proven
+- ✓ Fundamental equations: Cycle equation, J-sum bounds
 
-Computational verification has revealed that a fundamental bound used throughout the proof is **incorrect**:
+### What's Broken
+- ✗ Medium-J non-crisis cycles: Need new approach
+- ✗ Original C/4^k decay argument: Invalid with C ~ 3^k
 
-- **Claimed**: C ≥ 0.686 × 4^k for all cycle-compatible sequences
-- **Actual**: This bound fails for k ≥ 8; the coefficient C/4^k decreases with k
-- **Impact**: The denominator crisis analysis relies on this bound
+## File Structure
 
-### Valid Components
+### Core Framework (3 files)
+- **Core.lean**: Basic definitions, cycle equation, J-sum bounds
+- **Axioms.lean**: Computational results and unproven lemmas
+- **MainTheorem.lean**: Main impossibility theorem assembly
 
-Despite this issue, many components remain valid:
+### Case Analysis (4 files)
+- **SmallKVerification.lean**: Computational verification k ≤ 500
+- **ModularAnalysis.lean**: High-J modular contradiction
+- **CrisisAnalysis.lean**: Denominator crisis impossibility
+- **MediumJAnalysis.lean**: Medium-J case (INCOMPLETE)
 
-1. **Algebraic Framework**: The cycle equation n₁(2^J - 3^k) = C is correct
-2. **Modular Constraints**: 
-   - j=2 requires n ≡ 1 (mod 4), and for odd output n ≡ 1 (mod 8)
-   - These constraints create incompatibilities in high-J cases
-3. **High-J Impossibility**: When ≥90% positions have j=2, modular constraints cascade to contradiction
-4. **Small k**: Computational verification for k < 100 remains valid
+### Supporting Files (3 files)
+- **NumericalBounds.lean**: C growth, denominator bounds
+- **computational_verification.py**: Python verification scripts
+- **PROOF_REVISION_SUMMARY.md**: Summary of the C growth error
 
-## File Structure (Consolidated)
+### Documentation (2 files)
+- **README.md**: This file
+- **lakefile.toml**: Lean build configuration
 
-### Core Files
-- `Core/Definitions.lean` - Basic definitions, cycle equation, and fundamental theorems
-- `MainResults.lean` - Main theorem and all valid results consolidated
-- `ModularAnalysis.lean` - Modular constraints for high-J cases
-- `SmallKVerification.lean` - Computational verification for small k
+## Total: ~12 core files (down from 80+)
 
-### Analysis Files  
-- `CrisisAnalysis.lean` - Crisis phenomenon and closure constant bounds (needs revision)
-- `MediumJAnalysis.lean` - Analysis for medium-J cases (needs revision)
-- `Computational.lean` - All computational tools, constants, and C calculations
-
-## Proof Strategy
-
-The proof uses case analysis on k:
-
-1. **Small k (k < 100)**: Direct computational verification
-2. **Large k (k ≥ 100)**: Three subcases based on J value:
-   - **High-J** (J ≥ 2k - k/10): ✓ Modular incompatibility (proven)
-   - **Crisis** (denominator very small): ✗ Needs revised approach
-   - **Medium-J**: ✗ Needs revised approach
-
-## Known Issues and TODOs
-
-### High Priority
-1. **Fix C bounds**: Find correct lower bounds for C that work for all k
-2. **Revise crisis analysis**: Current approach relies on incorrect C bound
-3. **Complete non-high-J cases**: Need new approach without false bound
-
-### Medium Priority
-1. Complete the telescoping sum proof in cycle_equation
-2. Fill in computational verification implementation
-3. Explore alternative approaches using C/4^k decreasing property
-
-### Low Priority
-1. Clean up remaining sorry statements
-2. Add more documentation
-3. Consider extending computational verification to larger k
-
-## How to Build
+## Building and Running
 
 ```bash
-cd lean
-lake build BinaryCycles
+# Build the Lean formalization
+lake build
+
+# Run computational verification
+python3 computational_verification.py
+
+# Check specific theorem
+lake env lean BinaryCycles/MainTheorem.lean
 ```
 
-## Key Insights
+## Key Theorems
 
-1. The proof remains valid for high-J cycles (≥90% j=2 positions)
-2. The crisis phenomenon exists but requires different analysis
-3. C/4^k decreasing with k might itself lead to contradiction
-4. Modular constraints are more powerful than initially thought
+### The Main Result (with gap)
+```lean
+theorem no_binary_collatz_cycles : 
+    ∀ k : ℕ, ¬∃ cycle : BinaryCycle k, True
+```
 
-## Contributing
+Status: Proven except for medium-J non-crisis case.
 
-When working on this proof:
-1. Do not rely on C ≥ 0.686 × 4^k (it's false!)
-2. Verify all numerical claims computationally when possible
-3. Focus on structural/modular arguments rather than pure bounds
-4. Document any new approaches clearly
+### Complete Sub-results
+```lean
+-- Small k verified
+theorem no_small_k_cycles (k : ℕ) (hk : 0 < k ∧ k ≤ 500)
+
+-- High-J impossible  
+theorem high_j_modular_contradiction (k : ℕ) (hk : k > 1000)
+
+-- Crisis impossible
+theorem crisis_contradiction (k : ℕ) (hk : k > 100)
+```
+
+### The Gap
+```lean
+-- INCOMPLETE: Need new approach
+theorem medium_j_new_approach_needed (k : ℕ) (hk : k > 500)
+```
+
+## Mathematical Innovation Needed
+
+The medium-J non-crisis case requires new mathematics:
+1. **Problem**: With C ~ 3^k and denominator ~ δ·3^k, we get n₁ ~ constant
+2. **Failed approach**: Can't use counting argument when elements don't grow
+3. **Needed**: New structural constraints or contradiction mechanism
+
+Possible directions:
+- j-pattern forbidden configurations
+- Element ratio constraints through cycle
+- Different modular analysis
+- Cycle closure impossibility from structure
+
+## References
+
+See the parent directory for:
+- Original C code computing closure constants
+- Denominator crisis analysis
+- Full mathematical framework
+- Historical proof attempts

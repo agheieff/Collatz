@@ -56,8 +56,9 @@ We classify all large k into three exhaustive subcases:
 
 ## Key Mathematical Insights
 
-### 1. The Closure Constant Bound
-For any k-cycle: C ≥ 0.686 × 4^k (proven in `cycles/binary/closure_constant/`)
+### 1. The Closure Constant Growth
+For any k-cycle: C grows like 3^k (computational evidence in `cycles/binary/closure_constant/`)
+- Note: The original claim C ≥ 0.686 × 4^k is FALSE for k ≥ 8
 
 ### 2. The Denominator Crisis Phenomenon  
 When {αk} is small (α = 2 - log₂3), the denominator becomes tiny, forcing impossibly large cycle elements.
